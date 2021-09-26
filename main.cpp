@@ -68,19 +68,6 @@ int main() {
 
     file.clear();
 
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= m; ++j) {
-            std::cout << field[i][j];
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= m; ++j) {
-            std::cout << opens[i][j];
-        }
-        std::cout << std::endl;
-    }
     while (true) {
         std::cout << "Enter command:" << std::endl;
         std::string s;
@@ -91,7 +78,6 @@ int main() {
             x = stoi(s);
             std::cin >> y >> action;
         } else {
-            std::cout << '!';
             file << n << ' ' << m << ' ' << k << std::endl;
             for (int i = 1; i <= n; ++i) {
                 for (int j = 1; j <= m; ++j) {
