@@ -5,7 +5,7 @@
 #include <fstream>
 
 int main() {
-    std::fstream fin("saved_game.txt");
+    std::fstream file("saved_game.txt");
     std::srand(std::time(nullptr));
 
     int n, m, k;
@@ -13,18 +13,18 @@ int main() {
     std::vector<std::vector<int>> opens;
 
     char yn = 'N';
-    if (fin) {
+    if (file) {
         std::cout << "Do you want to continue the previous game? [Y/N]" << std::endl;
         std::cin >> yn;
     }
     if (yn == 'Y') {
-        fin >> n >> m >> k;
+        file >> n >> m >> k;
         field.assign(n + 2, std::vector<int> (m + 2, 0));
         opens.assign(n + 2, std::vector<int> (m + 2, 0));
         for (int i = 1; i <= n; ++i) {
             for (int j = 1; j <= m; ++j) {
                 int x;
-                fin >> x;
+                file >> x;
                 if ((i + j) % 2 == x % 2) {
                     field[i][j] = 0;
                 } else {
@@ -34,7 +34,7 @@ int main() {
         }
         for (int i = 1; i <= n; ++i) {
             for (int j = 1; j <= m; ++j) {
-                fin >> opens[i][j];
+                file >> opens[i][j];
             }
         }
     } else {
@@ -49,7 +49,7 @@ int main() {
         for (int i = 0; i < n; ++i) {
             field[i][0] = field[i][m + 1] = field[0][i] = field[n + 1][i] = 1;
         }
-        k = (std::rand() % 4) + 2;
+        //k = (std::rand() % 4) + 2;
         while (k > 0) {
             int x = std::rand() % 5 + 1;
             int y = std::rand() % 5;
@@ -66,9 +66,21 @@ int main() {
         }
     }
 
-    fin.close();
-    fin.clear();
+    file.clear();
 
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            std::cout << field[i][j];
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            std::cout << opens[i][j];
+        }
+        std::cout << std::endl;
+    }
     while (true) {
         std::cout << "Enter command:" << std::endl;
         std::string s;
@@ -79,18 +91,19 @@ int main() {
             x = stoi(s);
             std::cin >> y >> action;
         } else {
-            fin << n << m << k << std::endl;
+            std::cout << '!';
+            file << n << ' ' << m << ' ' << k << std::endl;
             for (int i = 1; i <= n; ++i) {
-                for (int j = 1; j <= n; ++j) {
-                    fin << field[i][j] << ' ';
+                for (int j = 1; j <= m; ++j) {
+                    file << field[i][j] << ' ';
                 }
-                fin << std::endl;
+                file << std::endl;
             }
             for (int i = 1; i <= n; ++i) {
-                for (int j = 1; j <= n; ++j) {
-                    fin << (opens[i][j] + i + j) % 2 << ' ';
+                for (int j = 1; j <= m; ++j) {
+                    file << (opens[i][j] + i + j) % 2 << ' ';
                 }
-                fin << std::endl;
+                file << std::endl;
             }
             break;
         }
@@ -110,6 +123,7 @@ int main() {
         if (action == "Open") {
             if (field[x][y]) {
                 std::cout << "You lose" << std::endl;
+                file.clear();
                 break;
             } else {
                 opens[x][y] = 1;
@@ -119,13 +133,13 @@ int main() {
         int cnt_not_open = 0, cnt_bombs = 0;
         for (int i = 1; i <= n; ++i) {
             for (int j = 1; j <= m; ++j) {
-                if (opens[x][y] == 0) {
+                if (opens[i][j] == 0) {
                     std::cout << "*";
                     cnt_not_open++;
-                } else if (opens[x][y] == 1) {
-                    std::cout << field[x - 1][y - 1] + field[x - 1][y] + field[x - 1][y + 1] + field[x][y + 1] +
-                    field[x + 1][y + 1] + field[x + 1][y] + field[x + 1][y - 1] + field[x][y - 1];
-                } else if (opens[x][y] == 2) {
+                } else if (opens[i][j] == 1) {
+                    std::cout << field[i - 1][j - 1] + field[i - 1][j] + field[i - 1][j + 1] + field[i][j + 1] +
+                    field[i + 1][j + 1] + field[i + 1][j] + field[i + 1][j - 1] + field[i][j - 1];
+                } else if (opens[i][j] == 2) {
                     std::cout << "F";
                     cnt_bombs++;
                 }
@@ -134,7 +148,7 @@ int main() {
         }
         if (cnt_not_open == 0 && cnt_bombs == k) {
             std::cout << "You win" << std::endl;
-            fin.clear();
+            file.clear();
             break;
         }
     }
